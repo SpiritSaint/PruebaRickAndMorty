@@ -38,6 +38,16 @@ const fetchEpisodes = async () => {
 }
 
 /**
+ * Recuperar los personajes
+ *
+ * @returns {Promise<*[]>}
+ */
+const fetchCharacters = async () => {
+    return await fetchApiResults('character')
+}
+
+
+/**
  * Contador de letras:
  * - Cuantas veces aparece la letra "l" en los nombres de las ubicaciones
  *
@@ -67,5 +77,21 @@ const howManyLetterEHaveTheEpisodes = async () => {
         .length
 }
 
+/**
+ * Contador de letras:
+ * - Cuantas veces aparece la letra "c" en los nombres de los personajes
+ *
+ * @returns {Promise<number>}
+ */
+const howManyLetterCHaveTheCharacters = async () => {
+    return (await fetchEpisodes())
+        .map((location) => location.name)
+        .join('')
+        .toLowerCase()
+        .match(/([c])/gi)
+        .length
+}
+
 howManyLetterLHaveTheLocations().then((response) => console.log("Locations: "+ response))
 howManyLetterEHaveTheEpisodes().then((response) => console.log("Episodes: " + response))
+howManyLetterCHaveTheCharacters().then((response) => console.log("Characters: " + response))
