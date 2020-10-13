@@ -1,0 +1,22 @@
+{
+  "name": "pruebarickandmorty",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SpiritSaint/PruebaRickAndMorty.git"
+  },
+  "author": "Ian Torres",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SpiritSaint/PruebaRickAndMorty/issues"
+  },
+  "homepage": "https://github.com/SpiritSaint/PruebaRickAndMorty#readme",
+  "dependencies": {
+    "axios": "^0.20.0"
+  }
+}
