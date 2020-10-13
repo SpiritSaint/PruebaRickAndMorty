@@ -1,24 +1,47 @@
 const axios = require('axios');
 
 /**
- * Recuperar las ubicaciones
+ * Recuperar los resultados de la API
+ *
+ * @param path
+ * @returns {Promise<[]>}
  */
-const fetchLocations = async () => {
+const fetchApiResults = async (path) => {
     let currentPage = 1
-    let locations = []
-    let firstResponse = await axios.get('https://rickandmortyapi.com/api/location')
+    let results = []
+    let firstResponse = await axios.get('https://rickandmortyapi.com/api/' + path)
     let totalPages = firstResponse.data.info.pages
-    firstResponse.data.results.forEach((location) => locations.push(location))
+    firstResponse.data.results.forEach((result) => results.push(result))
     for (currentPage++;currentPage <= totalPages;currentPage++) {
         let nextResponses = await axios.get('https://rickandmortyapi.com/api/location?page=' + currentPage)
-        nextResponses.data.results.forEach((location) => locations.push(location))
+        nextResponses.data.results.forEach((result) => results.push(result))
     }
-    return locations
+    return results
+}
+
+/**
+ * Recuperar las ubicaciones
+ *
+ * @returns {Promise<*[]>}
+ */
+const fetchLocations = async () => {
+    return await fetchApiResults('location')
+}
+
+/**
+ * Recuperar los episodios
+ *
+ * @returns {Promise<*[]>}
+ */
+const fetchEpisodes = async () => {
+    return await fetchApiResults('episode')
 }
 
 /**
  * Contador de letras:
  * - Cuantas veces aparece la letra "l" en los nombres de las ubicaciones
+ *
+ * @returns {Promise<number>}
  */
 const howManyLetterLHaveTheLocations = async () => {
     return (await fetchLocations())
@@ -29,4 +52,20 @@ const howManyLetterLHaveTheLocations = async () => {
         .length
 }
 
-howManyLetterLHaveTheLocations().then((response) => console.log(response))
+/**
+ * Contador de letras:
+ * - Cuantas veces aparece la letra "e" en los nombres de las episodios
+ *
+ * @returns {Promise<number>}
+ */
+const howManyLetterEHaveTheEpisodes = async () => {
+    return (await fetchEpisodes())
+        .map((location) => location.name)
+        .join('')
+        .toLowerCase()
+        .match(/([e])/gi)
+        .length
+}
+
+howManyLetterLHaveTheLocations().then((response) => console.log("Locations: "+ response))
+howManyLetterEHaveTheEpisodes().then((response) => console.log("Episodes: " + response))
