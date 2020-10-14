@@ -104,6 +104,9 @@ const howManyLetterCHaveTheCharacters = () => {
     return count
 }
 
+/**
+ * Contador de personajes y lugares:
+ */
 const howManyCharactersAndPlacesHaveEveryEpisode = () => {
     console.time('# Contando personajes y recuperando ubicaciones de los "Characters" de cada episodio')
     episodes.forEach((episode) => {
@@ -122,7 +125,7 @@ const howManyCharactersAndPlacesHaveEveryEpisode = () => {
 }
 
 /**
- * 1. ¿Cuántas letras C tienen los nombres de los personajes?
+ * Correr la prueba
  */
 Promise.all([
     fetchCharacters(),
