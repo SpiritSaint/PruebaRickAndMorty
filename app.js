@@ -1,5 +1,9 @@
 const axios = require('axios');
 
+let locations = []
+let episodes = []
+let characters = []
+
 /**
  * Recuperar los resultados de la API
  *
@@ -13,7 +17,7 @@ const fetchApiResults = async (path) => {
     let totalPages = firstResponse.data.info.pages
     firstResponse.data.results.forEach((result) => results.push(result))
     for (currentPage++;currentPage <= totalPages;currentPage++) {
-        let nextResponses = await axios.get('https://rickandmortyapi.com/api/location?page=' + currentPage)
+        let nextResponses = await axios.get('https://rickandmortyapi.com/api/' + path + '?page=' + currentPage)
         nextResponses.data.results.forEach((result) => results.push(result))
     }
     return results
@@ -25,7 +29,8 @@ const fetchApiResults = async (path) => {
  * @returns {Promise<*[]>}
  */
 const fetchLocations = async () => {
-    return await fetchApiResults('location')
+    locations = await fetchApiResults('location')
+    return locations
 }
 
 /**
@@ -34,7 +39,8 @@ const fetchLocations = async () => {
  * @returns {Promise<*[]>}
  */
 const fetchEpisodes = async () => {
-    return await fetchApiResults('episode')
+    episodes = await fetchApiResults('episode')
+    return episodes
 }
 
 /**
@@ -43,7 +49,8 @@ const fetchEpisodes = async () => {
  * @returns {Promise<*[]>}
  */
 const fetchCharacters = async () => {
-    return await fetchApiResults('character')
+    characters = await fetchApiResults('character')
+    return characters
 }
 
 
@@ -84,7 +91,7 @@ const howManyLetterEHaveTheEpisodes = async () => {
  * @returns {Promise<number>}
  */
 const howManyLetterCHaveTheCharacters = async () => {
-    return (await fetchEpisodes())
+    return (await fetchCharacters())
         .map((location) => location.name)
         .join('')
         .toLowerCase()
@@ -92,6 +99,44 @@ const howManyLetterCHaveTheCharacters = async () => {
         .length
 }
 
-howManyLetterLHaveTheLocations().then((response) => console.log("Locations: "+ response))
-howManyLetterEHaveTheEpisodes().then((response) => console.log("Episodes: " + response))
-howManyLetterCHaveTheCharacters().then((response) => console.log("Characters: " + response))
+const howManyCharactersAndPlacesHaveEveryEpisode = () => {
+    episodes.forEach((episode) => {
+        let charactersOfEpisode = episode.characters.length
+        let origins = [... new Set(episode.characters.map((character) => {
+            return characters.find((currentCharacter) => {
+                return `https://rickandmortyapi.com/api/character/${currentCharacter.id}` === character
+            })
+        }).map((character) => character.origin.name))].filter((origin) => origin !== 'unknown')
+        console.log(`Episodio "${episode.name}" tiene ${charactersOfEpisode} personajes provenientes de ${origins.length} ubicaciones:`)
+        origins.forEach((origin) => console.log(`- ${origin}`))
+    })
+}
+
+/**
+ * 1. ¿Cuántas letras C tienen los nombres de los personajes?
+ */
+howManyLetterCHaveTheCharacters()
+    .then((response) => console.log("Letras C de los personajes: " + response))
+    .then(() => {
+
+        /**
+         * 2. ¿Cuántas  letras L tienen los nombres de las ubicaciones?
+         */
+        howManyLetterLHaveTheLocations()
+            .then((response) => console.log("Letras L de las ubicaciones: " + response))
+            .then(() => {
+
+                /**
+                 * 3. ¿Cuántas letras E tienen los nombres de los episodios?
+                 */
+                howManyLetterEHaveTheEpisodes()
+                    .then((response) => console.log("Letras E de los episodios: " + response))
+                    .then(() => {
+
+                        /**
+                         * 4.- Por cada episodio, indicar la cantidad y
+                         */
+                        howManyCharactersAndPlacesHaveEveryEpisode()
+                    })
+            })
+    })
