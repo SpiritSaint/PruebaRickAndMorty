@@ -18,10 +18,16 @@ const fetchApiResults = async (path) => {
     let firstResponse = await axios.get('https://rickandmortyapi.com/api/' + path)
     let totalPages = firstResponse.data.info.pages
     firstResponse.data.results.forEach((result) => results.push(result))
+    let paths = []
     for (currentPage++;currentPage <= totalPages;currentPage++) {
-        let nextResponses = await axios.get('https://rickandmortyapi.com/api/' + path + '?page=' + currentPage)
-        nextResponses.data.results.forEach((result) => results.push(result))
+        paths.push('https://rickandmortyapi.com/api/' + path + '?page=' + currentPage)
     }
+    await axios.all(paths.map((path) => axios.get(path)))
+        .then((responses) => responses
+            .forEach(
+                (response) => response.data.results.forEach((result) => results.push(result))
+            )
+        )
     return results
 }
 
@@ -29,9 +35,7 @@ const fetchApiResults = async (path) => {
  * Recuperar las ubicaciones
  */
 const fetchLocations = async () => {
-    console.time('# Cargando "Locations"')
     locations = await fetchApiResults('location')
-    console.timeEnd('# Cargando "Locations"')
     return locations
 }
 
@@ -39,9 +43,7 @@ const fetchLocations = async () => {
  * Recuperar los episodios
  */
 const fetchEpisodes = async () => {
-    console.time('# Cargando "Episodes"')
     episodes = await fetchApiResults('episode')
-    console.timeEnd('# Cargando "Episodes"')
     return episodes
 }
 
@@ -49,9 +51,7 @@ const fetchEpisodes = async () => {
  * Recuperar los personajes
  */
 const fetchCharacters = async () => {
-    console.time('# Cargando "Characters"')
     characters = await fetchApiResults('character')
-    console.timeEnd('# Cargando "Characters"')
     return characters
 }
 
@@ -61,14 +61,12 @@ const fetchCharacters = async () => {
  * - Cuantas veces aparece la letra "l" en los nombres de las ubicaciones
  */
 const howManyLetterLHaveTheLocations = () => {
-    console.time('# Contando letras "l" en "Locations"')
     let count = locations
         .map((location) => location.name)
         .join('')
         .toLowerCase()
         .match(/([l])/gi)
         .length
-    console.timeEnd('# Contando letras "l" en "Locations"')
     return count
 }
 
@@ -77,14 +75,12 @@ const howManyLetterLHaveTheLocations = () => {
  * - Cuantas veces aparece la letra "e" en los nombres de las episodios
  */
 const howManyLetterEHaveTheEpisodes = () => {
-    console.time('# Contando letras "e" en "Episodes"')
     let count = episodes
         .map((location) => location.name)
         .join('')
         .toLowerCase()
         .match(/([e])/gi)
         .length
-    console.timeEnd('# Contando letras "e" en "Episodes"')
     return count
 }
 
@@ -93,14 +89,12 @@ const howManyLetterEHaveTheEpisodes = () => {
  * - Cuantas veces aparece la letra "c" en los nombres de los personajes
  */
 const howManyLetterCHaveTheCharacters = () => {
-    console.time('# Contando letras "c" en "Characters"')
     let count = characters
         .map((location) => location.name)
         .join('')
         .toLowerCase()
         .match(/([c])/gi)
         .length
-    console.timeEnd('# Contando letras "c" en "Characters"')
     return count
 }
 
@@ -124,6 +118,7 @@ const howManyCharactersAndPlacesHaveEveryEpisode = () => {
 /**
  * 1. ¿Cuántas letras C tienen los nombres de los personajes?
  */
+console.time('# Tiempo total de ejecución')
 Promise.all([
     fetchCharacters(),
     fetchLocations(),
@@ -131,10 +126,17 @@ Promise.all([
 ]).then(() => {
     console.time('# Tiempo de carga de algoritmos')
     console.warn('')
+    console.time('# Contando letras "c" en "Characters"')
     console.warn("Letras C de los personajes: " + howManyLetterCHaveTheCharacters())
+    console.timeEnd('# Contando letras "c" en "Characters"')
+    console.time('# Contando letras "l" en "Locations"')
     console.warn("Letras L de las ubicaciones: " + howManyLetterLHaveTheLocations())
+    console.timeEnd('# Contando letras "l" en "Locations"')
+    console.time('# Contando letras "e" en "Episodes"')
     console.warn("Letras E de los episodios: " + howManyLetterEHaveTheEpisodes())
+    console.timeEnd('# Contando letras "e" en "Episodes"')
     console.warn('')
     howManyCharactersAndPlacesHaveEveryEpisode()
     console.timeEnd('# Tiempo de carga de algoritmos')
+    console.timeEnd('# Tiempo total de ejecución')
 })
