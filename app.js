@@ -1,4 +1,4 @@
-const axios = require('axios');
+const axios = require('axios')
 
 /**
  * Listados vacíos
@@ -55,58 +55,53 @@ const fetchCharacters = async () => {
     return characters
 }
 
-
 /**
  * Contador de letras:
  * - Cuantas veces aparece la letra "l" en los nombres de las ubicaciones
  */
-const howManyLetterLHaveTheLocations = () => {
-    let count = locations
-        .map((location) => location.name)
-        .join('')
-        .toLowerCase()
-        .match(/([l])/gi)
-        .length
-    return count
-}
+const howManyLetterLHaveTheLocations = () => locations
+    .map((location) => location.name)
+    .join('')
+    .toLowerCase()
+    .match(/([l])/gi)
+    .length
 
 /**
  * Contador de letras:
  * - Cuantas veces aparece la letra "e" en los nombres de las episodios
  */
-const howManyLetterEHaveTheEpisodes = () => {
-    let count = episodes
-        .map((location) => location.name)
-        .join('')
-        .toLowerCase()
-        .match(/([e])/gi)
-        .length
-    return count
-}
+const howManyLetterEHaveTheEpisodes = () => episodes
+    .map((location) => location.name)
+    .join('')
+    .toLowerCase()
+    .match(/([e])/gi)
+    .length
 
 /**
  * Contador de letras:
  * - Cuantas veces aparece la letra "c" en los nombres de los personajes
  */
-const howManyLetterCHaveTheCharacters = () => {
-    let count = characters
-        .map((location) => location.name)
-        .join('')
-        .toLowerCase()
-        .match(/([c])/gi)
-        .length
-    return count
-}
+const howManyLetterCHaveTheCharacters = () => characters
+    .map((location) => location.name)
+    .join('')
+    .toLowerCase()
+    .match(/([c])/gi)
+    .length
 
+/**
+ * Cuantos personajes y lugares tiene cada episodio
+ */
 const howManyCharactersAndPlacesHaveEveryEpisode = () => {
     console.time('# Contando personajes y recuperando ubicaciones de los "Characters" de cada episodio')
     episodes.forEach((episode) => {
         let charactersOfEpisode = episode.characters.length
-        let origins = [... new Set(episode.characters.map((character) => {
-            return characters.find((currentCharacter) => {
-                return `https://rickandmortyapi.com/api/character/${currentCharacter.id}` === character
-            })
-        }).map((character) => character.origin.name))].filter((origin) => origin !== 'unknown')
+        let origins = [... new Set(
+            episode.characters.map(
+                (character) => characters.find(
+                    (currentCharacter) => `https://rickandmortyapi.com/api/character/${currentCharacter.id}` === character
+                )
+            ).map((character) => character.origin.name)
+        )].filter((origin) => origin !== 'unknown')
         console.warn(`Episodio "${episode.name}" tiene ${charactersOfEpisode} personajes provenientes de ${origins.length} ubicaciones:`)
         console.warn('')
         origins.forEach((origin) => console.warn(`- ${origin}`))
@@ -116,7 +111,7 @@ const howManyCharactersAndPlacesHaveEveryEpisode = () => {
 }
 
 /**
- * 1. ¿Cuántas letras C tienen los nombres de los personajes?
+ * Correr la prueba
  */
 console.time('# Tiempo total de ejecución')
 Promise.all([
