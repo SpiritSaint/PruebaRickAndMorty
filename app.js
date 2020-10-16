@@ -89,7 +89,7 @@ const howManyLetterCHaveTheCharacters = () => characters
     .length
 
 /**
- * Cuantos personajes y lugares tiene cada episodio
+ * Contador de personajes y lugares:
  */
 const howManyCharactersAndPlacesHaveEveryEpisode = () => {
     console.time('# Contando personajes y recuperando ubicaciones de los "Characters" de cada episodio')
